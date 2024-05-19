@@ -116,15 +116,3 @@ char	*get_next_line(int fd)
 	stash = ft_extract_new_stash(stash);
 	return (line);
 }
-/*
-int	main(void)
-{
-	int	fd;
-
-	fd = open("NULL.txt", O_RDONLY);
-	while (fd != 0)
-	{
-		printf("line %s", get_next_line(fd));
-	}
-	close(fd);
-}*/
