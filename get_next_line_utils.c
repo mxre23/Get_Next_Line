@@ -6,24 +6,30 @@
 /*   By: jmore-oj <jmore-oj@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:40:12 by jmore-oj          #+#    #+#             */
-/*   Updated: 2024/04/05 18:40:18 by jmore-oj         ###   ########.fr       */
+/*   Updated: 2024/05/10 23:39:06 by jmore-oj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	*ft_calloc(size_t count, size_t size)
+char	*ft_strdup(const char *s1)
 {
-	size_t	total_size;
-	void	*ptr;
+	size_t	len_s1;
+	char	*s2;
+	size_t	i;
 
-	total_size = count * size;
-	ptr = malloc(total_size);
-	if (ptr != NULL)
+	i = 0;
+	len_s1 = (ft_strlen(s1));
+	s2 = (char *) malloc(len_s1 * sizeof(char) + 1);
+	if (!s2)
+		return (NULL);
+	while (s1[i] != '\0')
 	{
-		ft_memset(ptr, 0, total_size);
+		s2[i] = s1[i];
+		i++;
 	}
-	return (ptr);
+	s2[i] = '\0';
+	return (s2);
 }
 
 char	*ft_strchr(const char *s, int c)
@@ -54,7 +60,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+/*size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
 	size_t	i;
 
@@ -68,22 +74,25 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	}
 	dst[i] = '\0';
 	return (ft_strlen(src));
-}
+}*/
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	size_t	s1_len;
-	size_t	s2_len;
-	char	*s3;
+	int		i;
+	int		j;
+	char	*tab;
 
-	if (!s1 || !s2)
+	i = 0;
+	j = 0;
+	tab = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (!tab)
 		return (NULL);
-	s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
-	s3 = (char *) malloc((s1_len + s2_len + 1) * sizeof(char));
-	if (!s3)
-		return (NULL);
-	ft_strlcpy(s3, s1, s1_len + 1);
-	ft_strlcpy(s3 + s1_len, s2, s2_len + 1);
-	return (s3);
+	while (s1[i])
+		tab[j++] = s1[i++];
+	i = 0;
+	while (s2[i])
+		tab[j++] = s2[i++];
+	tab[j] = 0;
+	free ((void *)(s1));
+	return (tab);
 }

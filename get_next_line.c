@@ -6,67 +6,38 @@
 /*   By: jmore-oj <jmore-oj@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:39:49 by jmore-oj          #+#    #+#             */
-/*   Updated: 2024/04/06 00:10:46 by jmore-oj         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:49:04 by jmore-oj         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+char	*ft_extract_line(char *stash, char *line)
 {
-	static char	*stash;
-	char		*line;
-	char		*buffer;
+	int	len;
+	int	i;
 
-	line = NULL;
-	buffer = ft_calloc (BUFFER_SIZE + 1, sizeof(char));
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-	{
-		free(stash);
-		free(buffer);
-		stash = NULL;
-		buffer = NULL;
+	len = 0;
+	i = 0;
+	if (stash == NULL)
 		return (NULL);
-	}
-	if (!buffer)
+	while (stash[len] != '\n' && stash[len])
+		len++;
+	if (stash[len] == '\n')
+		len++;
+	line = (char *)malloc((len + 1) * sizeof(char));
+	if (!line)
 		return (NULL);
-	stash = stash_filling(fd, stash, buffer);
-	if (*stash == 0)
+	while (i < len)
 	{
-		free (stash);
-		return (stash = 0);
+		line[i] = stash[i];
+		i++;
 	}
-	line = extract_line(stash, line);
-	stash = extract_new_stash(stash);
+	line[i] = 0;
 	return (line);
 }
 
-char	*stash_filling(int fd, char *stash, char *buffer)
-{
-	ssize_t	nbytes;
-
-	nbytes = 1;
-	if (!stash)
-		stash = ft_strdup("");
-	while (nbytes > 0)
-	{
-		nbytes = read(fd, buffer, BUFFER_SIZE);
-		if (nbytes == -1)
-		{
-			free (buffer);
-			return (NULL);
-		}
-		buffer[nbytes] = 0;
-		stash = ft_strjoin (stash, buffer);
-		if ((ft_strchr(buffer, '\n')))
-			break ;
-	}
-	free (buffer);
-	return (stash);
-}
-
-char	*extract_new_stash(char *stash)
+char	*ft_extract_new_stash(char *stash)
 {
 	int		len;
 	int		i;
@@ -93,10 +64,67 @@ char	*extract_new_stash(char *stash)
 	return (new_stash);
 }
 
-char	*extrat_line(char *stash, char *line)
+char	*ft_stash_filling(int fd, char *stash, char *buffer)
 {
-	int	len;
-	int	i;
+	ssize_t	nbytes;
 
-	len = 0;
-	i	= 
+	nbytes = 1;
+	if (!stash)
+		stash = ft_strdup("");
+	while (nbytes > 0)
+	{
+		nbytes = read(fd, buffer, BUFFER_SIZE);
+		if (nbytes == -1)
+		{
+			free (buffer);
+			return (NULL);
+		}
+		buffer[nbytes] = 0;
+		stash = ft_strjoin (stash, buffer);
+		if ((ft_strchr(buffer, '\n')))
+			break ;
+	}
+	free(buffer);
+	return (stash);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*stash;
+	char		*line;
+	char		*buffer;
+
+	line = NULL;
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		free(stash);
+		free(buffer);
+		stash = NULL;
+		buffer = NULL;
+		return (NULL);
+	}
+	stash = ft_stash_filling(fd, stash, buffer);
+	if (*stash == 0)
+	{
+		free (stash);
+		return (stash = 0);
+	}
+	line = ft_extract_line(stash, line);
+	stash = ft_extract_new_stash(stash);
+	return (line);
+}
+/*
+int	main(void)
+{
+	int	fd;
+
+	fd = open("NULL.txt", O_RDONLY);
+	while (fd != 0)
+	{
+		printf("line %s", get_next_line(fd));
+	}
+	close(fd);
+}*/
